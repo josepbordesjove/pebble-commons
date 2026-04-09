@@ -99,10 +99,16 @@ static void stripe_timer_callback(void *context) {
 #define ANIM_INTERVAL_MS 30
 #define ROUND_PAD_SELECTED 30
 #define ROUND_PAD_UNSELECTED 50
-#define ROUND_ITEM_SPACING 44
 #define ARC_THICKNESS 12
 #define ARC_SPAN_DEG 160
 #define DOT_RADIUS 4
+
+// Scale item spacing to screen size (44 on chalk 180px, ~56 on gabbro 228px)
+#ifdef PBL_PLATFORM_GABBRO
+#define ROUND_ITEM_SPACING 56
+#else
+#define ROUND_ITEM_SPACING 44
+#endif
 
 static Layer *s_round_canvas;
 static AppTimer *s_anim_timer = NULL;
