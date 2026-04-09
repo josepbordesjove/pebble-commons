@@ -1,6 +1,6 @@
 # pebble-commons
 
-Shared UI components and resources for Pebble smartwatch apps. Built for [Pebble SDK v3](https://developer.rebble.io/developer.pebble.com/index.html) and compatible with all six hardware platforms.
+Shared UI components and resources for [Pebble](https://developer.rebble.io/) smartwatch apps. Built for Pebble SDK v3 and compatible with all six hardware platforms.
 
 ## Modules
 
@@ -316,14 +316,18 @@ card_pager_layer_destroy(s_pager);
 
 ## Platform Support
 
-| Platform | Screen | Shape | Color | Status |
-|----------|--------|-------|-------|--------|
-| Aplite | 144x168 | Rectangular | B&W | Supported |
-| Basalt | 144x168 | Rectangular | Color | Supported |
-| Chalk | 180x180 | Round | Color | Supported |
-| Diorite | 144x168 | Rectangular | B&W | Supported |
-| Emery | 200x228 | Rectangular | Color | Supported |
-| Gabbro | 228x228 | Round | Color | Supported |
+All modules are tested and work on every Pebble hardware platform:
+
+| Platform | Model | Resolution | Shape | Color |
+|----------|-------|------------|-------|-------|
+| `aplite` | Pebble (Original) | 144x168 | Rectangular | B&W |
+| `basalt` | Pebble Time | 144x168 | Rectangular | 64 colors |
+| `chalk` | Pebble Time Round | 180x180 | Round | 64 colors |
+| `diorite` | Pebble 2 | 144x168 | Rectangular | B&W |
+| `emery` | Pebble Time 2 | 200x228 | Rectangular | 64 colors |
+| `gabbro` | Pebble Time 2 Round | 228x228 | Round | 64 colors |
+
+Platform-specific rendering is handled automatically via compile-time flags (`PBL_COLOR`, `PBL_ROUND`, `PBL_PLATFORM_*`).
 
 ## Examples
 
@@ -381,6 +385,10 @@ pebble-commons/
                 ├── pager_demo_window.c
                 └── icons_demo_window.c
 ```
+
+## Acknowledgments
+
+Thanks to [Pebble](https://developer.rebble.io/) and the [Rebble](https://rebble.io/) community for keeping the platform alive. Most of the code in this library is inspired by patterns found in the official Pebble SDK examples and refined with the help of [Claude](https://claude.ai), Anthropic's AI assistant.
 
 ## License
 
