@@ -1,7 +1,7 @@
 #include <pebble.h>
 #include "windows/splash_window.h"
 
-#define NUM_DEMOS 5
+#define NUM_DEMOS 7
 
 static Window *s_window;
 static MenuLayer *s_menu_layer;
@@ -13,6 +13,8 @@ static void progress_demo_push(void);
 static void scroll_demo_push(void);
 static void pager_demo_push(void);
 static void icons_demo_push(void);
+static void result_demo_push(void);
+static void weather_demo_push(void);
 
 typedef struct {
   const char *title;
@@ -26,6 +28,8 @@ static const DemoEntry s_demos[NUM_DEMOS] = {
   { "Scroll Text",    "Auto-scrolling marquee",    scroll_demo_push },
   { "Card Pager",     "Horizontal cards + dots",   pager_demo_push },
   { "Weather Icons",  "Bundled icon resources",    icons_demo_push },
+  { "Match Result",   "Sports score layout",       result_demo_push },
+  { "Weather View",   "Two columns + big icon",    weather_demo_push },
 };
 
 // Include demo window headers here (after forward decls)
@@ -34,12 +38,16 @@ static const DemoEntry s_demos[NUM_DEMOS] = {
 #include "windows/scroll_demo_window.h"
 #include "windows/pager_demo_window.h"
 #include "windows/icons_demo_window.h"
+#include "windows/result_demo_window.h"
+#include "windows/weather_demo_window.h"
 
 static void options_demo_push(void) { options_demo_window_push(); }
 static void progress_demo_push(void) { progress_demo_window_push(); }
 static void scroll_demo_push(void) { scroll_demo_window_push(); }
 static void pager_demo_push(void) { pager_demo_window_push(); }
 static void icons_demo_push(void) { icons_demo_window_push(); }
+static void result_demo_push(void) { result_demo_window_push(); }
+static void weather_demo_push(void) { weather_demo_window_push(); }
 
 static uint16_t get_num_rows(MenuLayer *menu, uint16_t section, void *data) {
   return NUM_DEMOS;
