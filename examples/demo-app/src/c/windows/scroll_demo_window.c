@@ -1,5 +1,5 @@
 #include "scroll_demo_window.h"
-#include "../commons/src/scroll_text_layer.h"
+#include "../commons/scroll_text_layer.h"
 
 static Window *s_window;
 static ScrollTextLayer *s_scroll_short;

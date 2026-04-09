@@ -1,5 +1,5 @@
 #include "progress_demo_window.h"
-#include "../commons/src/progress_layer.h"
+#include "../commons/progress_layer.h"
 
 static Window *s_window;
 static ProgressLayer *s_progress;

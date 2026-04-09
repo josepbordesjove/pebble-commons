@@ -1,5 +1,5 @@
 #include "pager_demo_window.h"
-#include "../commons/src/card_pager_layer.h"
+#include "../commons/card_pager_layer.h"
 
 #define NUM_PAGES 3
 

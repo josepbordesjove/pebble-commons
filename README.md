@@ -344,13 +344,39 @@ The `examples/` directory contains reference implementations:
 
 ### Running the demo app
 
+**Prerequisites:** [Pebble SDK](https://developer.rebble.io/developer.pebble.com/sdk/install/index.html) installed and available in your PATH.
+
 ```bash
 cd examples/demo-app
 pebble build
-pebble install --emulator basalt
 ```
 
-The demo app symlinks `src/c/commons/` back to the repo root, so the wscript glob compiles the library source automatically.
+This builds for all 6 platforms (aplite, basalt, chalk, diorite, emery, gabbro). Then install on any emulator:
+
+```bash
+# Color rectangular (Pebble Time)
+pebble install --emulator basalt
+
+# Color round (Pebble Time Round)
+pebble install --emulator chalk
+
+# B&W rectangular (Pebble 2)
+pebble install --emulator diorite
+
+# Large color rectangular (Pebble Time 2)
+pebble install --emulator emery
+
+# Large color round (Pebble Time 2 Round)
+pebble install --emulator gabbro
+```
+
+View logs while running:
+
+```bash
+pebble logs --emulator basalt
+```
+
+The demo app symlinks `src/c/commons/` to the library's `src/` directory, so the wscript glob compiles the library source automatically alongside the demo code.
 
 ## Project Structure
 
