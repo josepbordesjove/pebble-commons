@@ -132,10 +132,36 @@ static int y_to_arc_angle(int y, int cy, int r) {
   return (int)((angle_trig * 360) / TRIG_MAX_ANGLE);
 }
 
+// Integer square root using Newton's method
+static int isqrt(int n) {
+  if (n <= 0) return 0;
+  int x = n, y = (x + 1) / 2;
+  while (y < x) { x = y; y = (x + n / x) / 2; }
+  return x;
+}
+
+// Compute left padding at a given Y so text clears the round screen edge + arc.
+// Returns the X position where text can safely start.
+static int round_pad_at_y(int y, int cy, int r, int arc_inset) {
+  int dy = y - cy;
+  if (dy < 0) dy = -dy;
+  if (dy >= r) return r;
+  // Left edge of circle at this Y: x = r - sqrt(r^2 - dy^2)
+  int edge_x = r - isqrt(r * r - dy * dy);
+  // Must clear the arc (which extends arc_inset pixels inward from edge)
+  int min_pad = edge_x + arc_inset + 6;
+  return min_pad;
+}
+
 static void round_canvas_draw(Layer *layer, GContext *ctx) {
   GRect bounds = layer_get_bounds(layer);
   int cx = bounds.size.w / 2;
   int cy = bounds.size.h / 2;
+  int r = cx; // screen radius
+
+  // Pebble Gothic fonts have ~3px internal top padding before the glyphs.
+  // To visually center text at a target Y, we offset the rect upward.
+  #define FONT_TOP_PAD 3
 
   // ── Fixed accent arc (left side of circle) ──
   int32_t arc_start = DEG_TO_TRIGANGLE(270 - ARC_SPAN_DEG / 2);
@@ -155,10 +181,51 @@ static void round_canvas_draw(Layer *layer, GContext *ctx) {
     scroll = target_scroll;
   }
 
-  // ── Dot indicator — tracks the selected item's Y on the arc ──
+  // ── Menu items ──
+  for (int i = 0; i < s_config.num_items; i++) {
+    if (!s_config.items[i].title) continue;
+
+    // item_y = visual center of this item
+    int item_y = scroll + i * ROUND_ITEM_SPACING;
+
+    // Distance from screen center (for font/color selection)
+    int dy = item_y - cy;
+    if (dy < 0) dy = -dy;
+
+    // Font: selected (near center) gets larger bold font
+    bool near_center = (dy < ROUND_ITEM_SPACING / 2);
+    GFont font = fonts_get_system_font(
+        near_center ? FONT_KEY_GOTHIC_18_BOLD : FONT_KEY_GOTHIC_14_BOLD);
+    int font_h = near_center ? 18 : 14;
+
+    // Fade items based on distance from center
+    if (dy < ROUND_ITEM_SPACING / 3) {
+      graphics_context_set_text_color(ctx, GColorWhite);
+    } else if (dy < ROUND_ITEM_SPACING) {
+      graphics_context_set_text_color(ctx, GColorLightGray);
+    } else {
+      graphics_context_set_text_color(ctx, GColorDarkGray);
+    }
+
+    // Position text so its visual center aligns with item_y.
+    // Text rect top = item_y - font_h/2 - FONT_TOP_PAD
+    int text_top = item_y - font_h / 2 - FONT_TOP_PAD;
+    int text_h = font_h + FONT_TOP_PAD * 2 + 4;
+
+    // Padding: compute at the visual center of the text to match curvature
+    int pad = round_pad_at_y(item_y, cy, r, ARC_THICKNESS);
+    int text_w = bounds.size.w - pad - pad / 2; // right padding proportional
+
+    GRect text_rect = GRect(pad, text_top, text_w, text_h);
+    graphics_draw_text(ctx, s_config.items[i].title, font,
+                       text_rect, GTextOverflowModeTrailingEllipsis,
+                       GTextAlignmentLeft, NULL);
+  }
+
+  // ── Dot indicator — sits on the arc at the selected item's Y ──
   int dot_y_pos = scroll + s_selected_row * ROUND_ITEM_SPACING;
   if (s_animating) {
-    dot_y_pos = cy; // dot stays at center, items scroll to it
+    dot_y_pos = cy;
   }
   int arc_r = cx - ARC_THICKNESS / 2;
   int dot_angle = y_to_arc_angle(dot_y_pos, cy, arc_r);
@@ -169,54 +236,6 @@ static void round_canvas_draw(Layer *layer, GContext *ctx) {
 
   graphics_context_set_fill_color(ctx, GColorBlack);
   graphics_fill_circle(ctx, GPoint(dot_x, dot_y), DOT_RADIUS);
-
-  // ── Menu items ──
-  for (int i = 0; i < s_config.num_items; i++) {
-    if (!s_config.items[i].title) continue;
-
-    int item_y = scroll + i * ROUND_ITEM_SPACING;
-
-    // Padding follows the circular edge: items further from center need more
-    // indent because the round screen curves inward. Compute the left edge
-    // of the circle at this Y, then add a fixed margin past the arc.
-    int dy = item_y - cy;
-    if (dy < 0) dy = -dy;
-    int r = bounds.size.w / 2;
-    int pad;
-    if (dy >= r) {
-      pad = r; // fully off-screen
-    } else {
-      // Circle equation: x = r - sqrt(r^2 - dy^2)
-      int dx_sq = r * r - dy * dy;
-      int dx = 1;
-      while (dx * dx < dx_sq) dx++;
-      if (dx * dx > dx_sq) dx--;
-      pad = (r - dx) + ARC_THICKNESS + 8;
-    }
-
-    // Font: items near center get larger font
-    bool near_center = (dy < ROUND_ITEM_SPACING / 2);
-    GFont font = fonts_get_system_font(
-        near_center ? FONT_KEY_GOTHIC_18_BOLD : FONT_KEY_GOTHIC_14_BOLD);
-    int font_h = near_center ? 22 : 18;
-
-    // Fade items far from center
-    if (dy < ROUND_ITEM_SPACING / 3) {
-      graphics_context_set_text_color(ctx, GColorWhite);
-    } else if (dy < ROUND_ITEM_SPACING) {
-      graphics_context_set_text_color(ctx, GColorLightGray);
-    } else {
-      graphics_context_set_text_color(ctx, GColorDarkGray);
-    }
-
-    int text_w = bounds.size.w - pad - 10;
-    int text_h = font_h * 2 + 4;  // allow two lines
-    int text_y_adj = item_y - text_h / 2;
-    GRect text_rect = GRect(pad, text_y_adj, text_w, text_h);
-    graphics_draw_text(ctx, s_config.items[i].title, font,
-                       text_rect, GTextOverflowModeWordWrap,
-                       GTextAlignmentLeft, NULL);
-  }
 }
 
 static void round_anim_timer_callback(void *context) {
