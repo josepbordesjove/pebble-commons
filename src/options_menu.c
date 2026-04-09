@@ -140,17 +140,17 @@ static int isqrt(int n) {
   return x;
 }
 
-// Compute left padding at a given Y so text clears the round screen edge + arc.
-// Returns the X position where text can safely start.
-static int round_pad_at_y(int y, int cy, int r, int arc_inset) {
-  int dy = y - cy;
-  if (dy < 0) dy = -dy;
-  if (dy >= r) return r;
-  // Left edge of circle at this Y: x = r - sqrt(r^2 - dy^2)
-  int edge_x = r - isqrt(r * r - dy * dy);
-  // Must clear the arc (which extends arc_inset pixels inward from edge)
-  int min_pad = edge_x + arc_inset + 6;
-  return min_pad;
+// Compute left padding so text at (center_y ± half_h) clears the round edge + arc.
+// Uses the outermost Y of the text (corner furthest from screen center) to ensure
+// the text never clips into the curved screen edge, even at the top/bottom.
+static int round_pad_at_y(int center_y, int half_h, int cy, int r, int arc_inset) {
+  // Use the edge of the text furthest from center for worst-case padding
+  int dy_outer = center_y - cy;
+  if (dy_outer < 0) dy_outer = -dy_outer;
+  dy_outer += half_h; // extend to the outer edge of the text
+  if (dy_outer >= r) return r;
+  int edge_x = r - isqrt(r * r - dy_outer * dy_outer);
+  return edge_x + arc_inset + 8;
 }
 
 static void round_canvas_draw(Layer *layer, GContext *ctx) {
@@ -212,8 +212,8 @@ static void round_canvas_draw(Layer *layer, GContext *ctx) {
     int text_top = item_y - font_h / 2 - FONT_TOP_PAD;
     int text_h = font_h + FONT_TOP_PAD * 2 + 4;
 
-    // Padding: compute at the visual center of the text to match curvature
-    int pad = round_pad_at_y(item_y, cy, r, ARC_THICKNESS);
+    // Padding: compute using the outer edge of the text for worst-case clearance
+    int pad = round_pad_at_y(item_y, text_h / 2, cy, r, ARC_THICKNESS);
     int text_w = bounds.size.w - pad - pad / 2; // right padding proportional
 
     GRect text_rect = GRect(pad, text_top, text_w, text_h);
