@@ -97,8 +97,13 @@ static void stripe_timer_callback(void *context) {
 
 #define ANIM_FRAMES 8
 #define ANIM_INTERVAL_MS 30
+#ifdef PBL_PLATFORM_GABBRO
+#define ROUND_PAD_SELECTED 44
+#define ROUND_PAD_UNSELECTED 64
+#else
 #define ROUND_PAD_SELECTED 30
 #define ROUND_PAD_UNSELECTED 50
+#endif
 #define ARC_THICKNESS 12
 #define ARC_SPAN_DEG 160
 #define DOT_RADIUS 4
