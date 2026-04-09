@@ -97,13 +97,6 @@ static void stripe_timer_callback(void *context) {
 
 #define ANIM_FRAMES 8
 #define ANIM_INTERVAL_MS 30
-#ifdef PBL_PLATFORM_GABBRO
-#define ROUND_PAD_SELECTED 44
-#define ROUND_PAD_UNSELECTED 64
-#else
-#define ROUND_PAD_SELECTED 30
-#define ROUND_PAD_UNSELECTED 50
-#endif
 #define ARC_THICKNESS 12
 #define ARC_SPAN_DEG 160
 #define DOT_RADIUS 4
@@ -183,24 +176,34 @@ static void round_canvas_draw(Layer *layer, GContext *ctx) {
 
     int item_y = scroll + i * ROUND_ITEM_SPACING;
 
-    // Distance from center determines padding (further = more indented)
-    int dist = item_y - cy;
-    if (dist < 0) dist = -dist;
-    int max_dist = ROUND_ITEM_SPACING;
-    if (dist > max_dist) dist = max_dist;
-    int pad = ROUND_PAD_SELECTED +
-              (ROUND_PAD_UNSELECTED - ROUND_PAD_SELECTED) * dist / max_dist;
+    // Padding follows the circular edge: items further from center need more
+    // indent because the round screen curves inward. Compute the left edge
+    // of the circle at this Y, then add a fixed margin past the arc.
+    int dy = item_y - cy;
+    if (dy < 0) dy = -dy;
+    int r = bounds.size.w / 2;
+    int pad;
+    if (dy >= r) {
+      pad = r; // fully off-screen
+    } else {
+      // Circle equation: x = r - sqrt(r^2 - dy^2)
+      int dx_sq = r * r - dy * dy;
+      int dx = 1;
+      while (dx * dx < dx_sq) dx++;
+      if (dx * dx > dx_sq) dx--;
+      pad = (r - dx) + ARC_THICKNESS + 8;
+    }
 
     // Font: items near center get larger font
-    bool near_center = (dist < ROUND_ITEM_SPACING / 2);
+    bool near_center = (dy < ROUND_ITEM_SPACING / 2);
     GFont font = fonts_get_system_font(
         near_center ? FONT_KEY_GOTHIC_18_BOLD : FONT_KEY_GOTHIC_14_BOLD);
     int font_h = near_center ? 22 : 18;
 
     // Fade items far from center
-    if (dist < ROUND_ITEM_SPACING / 3) {
+    if (dy < ROUND_ITEM_SPACING / 3) {
       graphics_context_set_text_color(ctx, GColorWhite);
-    } else if (dist < ROUND_ITEM_SPACING) {
+    } else if (dy < ROUND_ITEM_SPACING) {
       graphics_context_set_text_color(ctx, GColorLightGray);
     } else {
       graphics_context_set_text_color(ctx, GColorDarkGray);
