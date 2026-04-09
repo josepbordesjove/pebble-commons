@@ -26,6 +26,18 @@
       "media": [
         {
           "type": "png",
+          "name": "PEBBLE_LOGO",
+          "file": "images/pebble_logo.png",
+          "targetPlatforms": ["basalt", "chalk", "emery", "gabbro"]
+        },
+        {
+          "type": "png",
+          "name": "PEBBLE_LOGO",
+          "file": "images/pebble_logo_bw.png",
+          "targetPlatforms": ["aplite", "diorite"]
+        },
+        {
+          "type": "png",
           "name": "WEATHER_SUNNY",
           "file": "images/weather_sunny.png",
           "targetPlatforms": ["basalt", "chalk", "emery", "gabbro"]
