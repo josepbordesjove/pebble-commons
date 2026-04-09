@@ -322,6 +322,9 @@ static void window_load(Window *window) {
   #ifdef PBL_COLOR
   menu_layer_set_normal_colors(s_menu_layer, GColorBlack, GColorWhite);
   menu_layer_set_highlight_colors(s_menu_layer, GColorBlack, GColorWhite);
+  #else
+  menu_layer_set_normal_colors(s_menu_layer, GColorBlack, GColorWhite);
+  menu_layer_set_highlight_colors(s_menu_layer, GColorWhite, GColorBlack);
   #endif
 
   layer_add_child(window_layer, menu_layer_get_layer(s_menu_layer));

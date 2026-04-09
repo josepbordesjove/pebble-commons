@@ -39,7 +39,7 @@ static void window_load(Window *window) {
   #ifdef PBL_COLOR
   window_set_background_color(window, GColorDarkGray);
   #else
-  window_set_background_color(window, GColorBlack);
+  window_set_background_color(window, GColorWhite);
   #endif
 
   // Title
@@ -49,7 +49,7 @@ static void window_load(Window *window) {
   text_layer_set_text_alignment(s_title_layer, GTextAlignmentCenter);
   text_layer_set_font(s_title_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
   text_layer_set_background_color(s_title_layer, GColorClear);
-  text_layer_set_text_color(s_title_layer, GColorWhite);
+  text_layer_set_text_color(s_title_layer, PBL_IF_COLOR_ELSE(GColorWhite, GColorBlack));
   layer_add_child(window_layer, text_layer_get_layer(s_title_layer));
 
   // Grid layout: 4x2 grid of icons with labels
@@ -86,7 +86,7 @@ static void window_load(Window *window) {
     text_layer_set_text_alignment(s_label_layers[i], GTextAlignmentCenter);
     text_layer_set_font(s_label_layers[i], fonts_get_system_font(FONT_KEY_GOTHIC_09));
     text_layer_set_background_color(s_label_layers[i], GColorClear);
-    text_layer_set_text_color(s_label_layers[i], GColorLightGray);
+    text_layer_set_text_color(s_label_layers[i], PBL_IF_COLOR_ELSE(GColorLightGray, GColorBlack));
     layer_add_child(window_layer, text_layer_get_layer(s_label_layers[i]));
   }
 }
