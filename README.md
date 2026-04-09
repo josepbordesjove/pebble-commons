@@ -71,12 +71,12 @@ From any file under `src/c/`, use relative includes:
 
 ```c
 // From src/c/modules/my_module.c
-#include "../commons/src/options_menu.h"
-#include "../commons/src/progress_layer.h"
+#include "../commons/options_menu.h"
+#include "../commons/progress_layer.h"
 
 // From src/c/main.c
-#include "commons/src/options_menu.h"
-#include "commons/src/progress_layer.h"
+#include "commons/options_menu.h"
+#include "commons/progress_layer.h"
 ```
 
 ### Using weather icons
@@ -119,7 +119,7 @@ git submodule update --init --recursive
 ### Options Menu
 
 ```c
-#include "commons/src/options_menu.h"
+#include "commons/options_menu.h"
 ```
 
 **Types:**
@@ -180,7 +180,7 @@ static void show_options(void) {
 ### Progress Layer
 
 ```c
-#include "commons/src/progress_layer.h"
+#include "commons/progress_layer.h"
 ```
 
 **Functions:**
@@ -217,7 +217,7 @@ progress_layer_destroy(s_progress);
 ### Scroll Text Layer
 
 ```c
-#include "commons/src/scroll_text_layer.h"
+#include "commons/scroll_text_layer.h"
 ```
 
 **Functions:**
@@ -258,7 +258,7 @@ scroll_text_layer_destroy(s_scroll);
 ### Card Pager Layer
 
 ```c
-#include "commons/src/card_pager_layer.h"
+#include "commons/card_pager_layer.h"
 ```
 
 **Types:**
@@ -341,6 +341,8 @@ The `examples/` directory contains reference implementations:
   - **Scroll Text**: Three scroll text layers demonstrating different speeds and text lengths
   - **Card Pager**: Three-page horizontal card view with slide animations and dot indicators
   - **Weather Icons**: Grid view of all 8 bundled weather icons with labels
+  - **Match Result**: Sports score list with pulsing live indicator and match detail on select
+  - **Weather View**: Two-column layout with temperature, wind, and large centered icon
 
 ### Running the demo app
 
@@ -405,11 +407,14 @@ pebble-commons/
         └── src/c/
             ├── main.c
             └── windows/
+                ├── splash_window.c
                 ├── options_demo_window.c
                 ├── progress_demo_window.c
                 ├── scroll_demo_window.c
                 ├── pager_demo_window.c
-                └── icons_demo_window.c
+                ├── icons_demo_window.c
+                ├── result_demo_window.c
+                └── weather_demo_window.c
 ```
 
 ## Acknowledgments
