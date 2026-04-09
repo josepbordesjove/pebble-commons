@@ -66,10 +66,28 @@ static void draw_header(GContext *ctx, const Layer *cell_layer, uint16_t section
 }
 
 static void draw_row(GContext *ctx, const Layer *cell_layer, MenuIndex *index, void *data) {
-  menu_cell_basic_draw(ctx, cell_layer,
-                       s_demos[index->row].title,
-                       s_demos[index->row].subtitle,
-                       NULL);
+  GRect bounds = layer_get_bounds(cell_layer);
+  const char *title = s_demos[index->row].title;
+  const char *subtitle = s_demos[index->row].subtitle;
+
+  int16_t pad = PBL_IF_ROUND_ELSE(20, 8);
+
+  // Title: bold, larger
+  GFont title_font = fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
+  GRect title_rect = GRect(pad, 4, bounds.size.w - pad * 2, 22);
+  graphics_draw_text(ctx, title, title_font, title_rect,
+                     GTextOverflowModeTrailingEllipsis,
+                     PBL_IF_ROUND_ELSE(GTextAlignmentCenter, GTextAlignmentLeft), NULL);
+
+  // Subtitle: smaller, lighter color
+  GFont sub_font = fonts_get_system_font(FONT_KEY_GOTHIC_14);
+  #ifdef PBL_COLOR
+  graphics_context_set_text_color(ctx, GColorDarkGray);
+  #endif
+  GRect sub_rect = GRect(pad, 24, bounds.size.w - pad * 2, 18);
+  graphics_draw_text(ctx, subtitle, sub_font, sub_rect,
+                     GTextOverflowModeTrailingEllipsis,
+                     PBL_IF_ROUND_ELSE(GTextAlignmentCenter, GTextAlignmentLeft), NULL);
 }
 
 static void select_click(MenuLayer *menu, MenuIndex *index, void *data) {
