@@ -38,11 +38,7 @@ static void window_load(Window *window) {
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_bounds(window_layer);
 
-  #ifdef PBL_COLOR
-  window_set_background_color(window, GColorBlack);
-  #else
   window_set_background_color(window, GColorWhite);
-  #endif
 
   // Logo centered vertically, slightly above center
   s_logo_bitmap = gbitmap_create_with_resource(RESOURCE_ID_PEBBLE_LOGO);
@@ -67,11 +63,7 @@ static void window_load(Window *window) {
   text_layer_set_text_alignment(s_subtitle_layer, GTextAlignmentCenter);
   text_layer_set_font(s_subtitle_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
   text_layer_set_background_color(s_subtitle_layer, GColorClear);
-  #ifdef PBL_COLOR
-  text_layer_set_text_color(s_subtitle_layer, GColorLightGray);
-  #else
-  text_layer_set_text_color(s_subtitle_layer, GColorBlack);
-  #endif
+  text_layer_set_text_color(s_subtitle_layer, GColorDarkGray);
   layer_add_child(window_layer, text_layer_get_layer(s_subtitle_layer));
 
   // Progress bar near the bottom
@@ -81,13 +73,8 @@ static void window_load(Window *window) {
 
   s_progress = progress_layer_create(GRect(bar_x, bar_y, bar_w, 4));
   progress_layer_set_corner_radius(s_progress, 2);
-  #ifdef PBL_COLOR
-  progress_layer_set_foreground_color(s_progress, GColorWhite);
-  progress_layer_set_background_color(s_progress, GColorDarkGray);
-  #else
   progress_layer_set_foreground_color(s_progress, GColorBlack);
-  progress_layer_set_background_color(s_progress, GColorWhite);
-  #endif
+  progress_layer_set_background_color(s_progress, GColorLightGray);
   layer_add_child(window_layer, progress_layer_get_layer(s_progress));
 
   // Start progress animation and splash timer
