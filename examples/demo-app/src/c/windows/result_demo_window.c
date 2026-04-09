@@ -35,84 +35,129 @@ static const MatchData s_matches[NUM_MATCHES] = {
     0, 0, "15:30", "La Ceramica", "Gil Manzano", false, false },
 };
 
-// ── Match Detail Window ─────────────────────────────────────────────
+// ── Match Detail Window (matches pebble-laliga live_window style) ────
 
 static Window *s_detail_window;
 static Layer *s_detail_canvas;
 static const MatchData *s_detail_match;
+
+static void draw_dotted_line(GContext *ctx, GPoint start, GPoint end, GColor color) {
+  graphics_context_set_stroke_color(ctx, color);
+  int total = end.x - start.x;
+  for (int i = 0; i < total; i += 4) {
+    if (i + 2 <= total) {
+      graphics_draw_line(ctx, GPoint(start.x + i, start.y),
+                         GPoint(start.x + i + 1, start.y));
+    }
+  }
+}
 
 static void detail_canvas_draw(Layer *layer, GContext *ctx) {
   GRect bounds = layer_get_bounds(layer);
   const MatchData *m = s_detail_match;
   if (!m) return;
 
-  int16_t w = bounds.size.w;
-  int16_t pad = PBL_IF_ROUND_ELSE(20, 8);
-
-  GFont big_font = fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD);
-  GFont name_font = fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
-  GFont small_font = fonts_get_system_font(FONT_KEY_GOTHIC_14);
+  #if PBL_ROUND
+  int margin = 26;
+  int y = 30;
+  #else
+  int margin = 8;
+  int y = 4;
+  #endif
+  int content_w = bounds.size.w - margin * 2;
+  int half_w = content_w / 2;
 
   #ifdef PBL_COLOR
-  GColor text_main = GColorWhite;
-  GColor text_dim = GColorCeleste;
-  GColor text_accent = m->is_live ? GColorSunsetOrange : GColorWhite;
+  GColor accent = ACCENT_COLOR;
+  GColor dim_color = GColorDarkGray;
   #else
-  GColor text_main = GColorBlack;
-  GColor text_dim = GColorBlack;
-  GColor text_accent = GColorBlack;
+  GColor accent = GColorBlack;
+  GColor dim_color = GColorBlack;
   #endif
 
-  // Status at top
-  int16_t y = PBL_IF_ROUND_ELSE(14, 6);
-  graphics_context_set_text_color(ctx, text_accent);
-  graphics_draw_text(ctx, m->status, name_font,
-                     GRect(pad, y, w - pad * 2, 22),
+  // ── Top bar: status badge (left) + league name (center) ──
+  const char *badge = m->is_live ? "LIVE" : (m->is_finished ? "FT" : "SCHED");
+  graphics_context_set_text_color(ctx, m->is_live ? accent : dim_color);
+  graphics_draw_text(ctx, badge, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD),
+                     GRect(margin, y, content_w / 3, 18),
+                     GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
+
+  graphics_context_set_text_color(ctx, GColorBlack);
+  graphics_draw_text(ctx, "La Liga", fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD),
+                     GRect(margin, y, content_w, 18),
                      GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
 
-  // Home team name
-  y += 24;
-  graphics_context_set_text_color(ctx, text_dim);
-  graphics_draw_text(ctx, m->home_full, small_font,
-                     GRect(pad, y, w - pad * 2, 18),
+  // ── Dotted separator ──
+  y += 20;
+  draw_dotted_line(ctx, GPoint(margin, y), GPoint(bounds.size.w - margin, y), GColorBlack);
+
+  // ── Large scores side by side ──
+  y += 6;
+  char home_s[4], away_s[4];
+  snprintf(home_s, sizeof(home_s), m->is_finished || m->is_live ? "%d" : "-", m->home_score);
+  snprintf(away_s, sizeof(away_s), m->is_finished || m->is_live ? "%d" : "-", m->away_score);
+
+  GFont score_font;
+  int score_h;
+  #if PBL_ROUND
+  score_font = fonts_get_system_font(FONT_KEY_LECO_32_BOLD_NUMBERS);
+  score_h = 36;
+  #elif defined(PBL_COLOR)
+  score_font = fonts_get_system_font(FONT_KEY_LECO_42_NUMBERS);
+  score_h = 48;
+  #else
+  score_font = fonts_get_system_font(FONT_KEY_BITHAM_34_MEDIUM_NUMBERS);
+  score_h = 38;
+  #endif
+
+  graphics_context_set_text_color(ctx, GColorBlack);
+  graphics_draw_text(ctx, home_s, score_font,
+                     GRect(margin, y, half_w, score_h),
+                     GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+  graphics_draw_text(ctx, away_s, score_font,
+                     GRect(margin + half_w, y, half_w, score_h),
                      GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
 
-  // Big score
-  y += 16;
-  char score_buf[12];
-  snprintf(score_buf, sizeof(score_buf), "%d - %d", m->home_score, m->away_score);
-  graphics_context_set_text_color(ctx, text_main);
-  graphics_draw_text(ctx, score_buf, big_font,
-                     GRect(0, y, w, 34),
+  // ── Team TLAs below scores ──
+  y += score_h;
+  graphics_draw_text(ctx, m->home, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD),
+                     GRect(margin, y, half_w, 20),
                      GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
-
-  // Away team name
-  y += 34;
-  graphics_context_set_text_color(ctx, text_dim);
-  graphics_draw_text(ctx, m->away_full, small_font,
-                     GRect(pad, y, w - pad * 2, 18),
+  graphics_draw_text(ctx, m->away, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD),
+                     GRect(margin + half_w, y, half_w, 20),
                      GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+  y += 20;
 
-  // Separator
-  y += 24;
+  // ── Full team names (smaller) ──
+  graphics_context_set_text_color(ctx, dim_color);
+  graphics_draw_text(ctx, m->home_full, fonts_get_system_font(FONT_KEY_GOTHIC_14),
+                     GRect(margin, y, half_w, 16),
+                     GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+  graphics_draw_text(ctx, m->away_full, fonts_get_system_font(FONT_KEY_GOTHIC_14),
+                     GRect(margin + half_w, y, half_w, 16),
+                     GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+  y += 18;
+
+  // ── Dotted separator ──
+  y += 2;
   #ifdef PBL_COLOR
-  graphics_context_set_stroke_color(ctx, GColorMintGreen);
+  draw_dotted_line(ctx, GPoint(margin, y), GPoint(bounds.size.w - margin, y), accent);
   #else
-  graphics_context_set_stroke_color(ctx, GColorBlack);
+  draw_dotted_line(ctx, GPoint(margin, y), GPoint(bounds.size.w - margin, y), GColorBlack);
   #endif
-  graphics_draw_line(ctx, GPoint(pad + 10, y), GPoint(w - pad - 10, y));
 
-  // Venue
-  y += 8;
-  graphics_context_set_text_color(ctx, text_dim);
-  graphics_draw_text(ctx, m->venue, small_font,
-                     GRect(pad, y, w - pad * 2, 18),
+  // ── Status text ──
+  y += 4;
+  graphics_context_set_text_color(ctx, m->is_live ? accent : dim_color);
+  graphics_draw_text(ctx, m->status, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD),
+                     GRect(margin, y, content_w, 20),
                      GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
 
-  // Referee
-  y += 16;
-  graphics_draw_text(ctx, m->referee, small_font,
-                     GRect(pad, y, w - pad * 2, 18),
+  // ── Venue ──
+  y += 22;
+  graphics_context_set_text_color(ctx, dim_color);
+  graphics_draw_text(ctx, m->venue, fonts_get_system_font(FONT_KEY_GOTHIC_14),
+                     GRect(margin, y, content_w, 16),
                      GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
 }
 
@@ -120,11 +165,7 @@ static void detail_load(Window *window) {
   Layer *root = window_get_root_layer(window);
   GRect bounds = layer_get_bounds(root);
 
-  #ifdef PBL_COLOR
-  window_set_background_color(window, GColorDarkGreen);
-  #else
   window_set_background_color(window, GColorWhite);
-  #endif
 
   s_detail_canvas = layer_create(bounds);
   layer_set_update_proc(s_detail_canvas, detail_canvas_draw);
