@@ -1,0 +1,127 @@
+{
+  "name": "pebble-commons-demo",
+  "author": "Josep Bordes",
+  "version": "1.0.0",
+  "keywords": [
+    "pebble-app"
+  ],
+  "private": true,
+  "pebble": {
+    "displayName": "Commons Demo",
+    "uuid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "sdkVersion": "3",
+    "enableMultiJS": false,
+    "targetPlatforms": [
+      "aplite",
+      "basalt",
+      "chalk",
+      "diorite",
+      "emery",
+      "gabbro"
+    ],
+    "watchapp": {
+      "watchface": false
+    },
+    "resources": {
+      "media": [
+        {
+          "type": "png",
+          "name": "WEATHER_SUNNY",
+          "file": "images/weather_sunny.png",
+          "targetPlatforms": ["basalt", "chalk", "emery", "gabbro"]
+        },
+        {
+          "type": "png",
+          "name": "WEATHER_SUNNY",
+          "file": "images/weather_sunny_bw.png",
+          "targetPlatforms": ["aplite", "diorite"]
+        },
+        {
+          "type": "png",
+          "name": "WEATHER_PARTLY_CLOUDY",
+          "file": "images/weather_partly_cloudy.png",
+          "targetPlatforms": ["basalt", "chalk", "emery", "gabbro"]
+        },
+        {
+          "type": "png",
+          "name": "WEATHER_PARTLY_CLOUDY",
+          "file": "images/weather_partly_cloudy_bw.png",
+          "targetPlatforms": ["aplite", "diorite"]
+        },
+        {
+          "type": "png",
+          "name": "WEATHER_CLOUDY",
+          "file": "images/weather_cloudy.png",
+          "targetPlatforms": ["basalt", "chalk", "emery", "gabbro"]
+        },
+        {
+          "type": "png",
+          "name": "WEATHER_CLOUDY",
+          "file": "images/weather_cloudy_bw.png",
+          "targetPlatforms": ["aplite", "diorite"]
+        },
+        {
+          "type": "png",
+          "name": "WEATHER_LIGHT_RAIN",
+          "file": "images/weather_light_rain.png",
+          "targetPlatforms": ["basalt", "chalk", "emery", "gabbro"]
+        },
+        {
+          "type": "png",
+          "name": "WEATHER_LIGHT_RAIN",
+          "file": "images/weather_light_rain_bw.png",
+          "targetPlatforms": ["aplite", "diorite"]
+        },
+        {
+          "type": "png",
+          "name": "WEATHER_HEAVY_RAIN",
+          "file": "images/weather_heavy_rain.png",
+          "targetPlatforms": ["basalt", "chalk", "emery", "gabbro"]
+        },
+        {
+          "type": "png",
+          "name": "WEATHER_HEAVY_RAIN",
+          "file": "images/weather_heavy_rain_bw.png",
+          "targetPlatforms": ["aplite", "diorite"]
+        },
+        {
+          "type": "png",
+          "name": "WEATHER_SNOW",
+          "file": "images/weather_snow.png",
+          "targetPlatforms": ["basalt", "chalk", "emery", "gabbro"]
+        },
+        {
+          "type": "png",
+          "name": "WEATHER_SNOW",
+          "file": "images/weather_snow_bw.png",
+          "targetPlatforms": ["aplite", "diorite"]
+        },
+        {
+          "type": "png",
+          "name": "WEATHER_RAIN_SNOW",
+          "file": "images/weather_rain_snow.png",
+          "targetPlatforms": ["basalt", "chalk", "emery", "gabbro"]
+        },
+        {
+          "type": "png",
+          "name": "WEATHER_RAIN_SNOW",
+          "file": "images/weather_rain_snow_bw.png",
+          "targetPlatforms": ["aplite", "diorite"]
+        },
+        {
+          "type": "png",
+          "name": "WEATHER_GENERIC",
+          "file": "images/weather_generic.png",
+          "targetPlatforms": ["basalt", "chalk", "emery", "gabbro"]
+        },
+        {
+          "type": "png",
+          "name": "WEATHER_GENERIC",
+          "file": "images/weather_generic_bw.png",
+          "targetPlatforms": ["aplite", "diorite"]
+        }
+      ]
+    }
+  },
+  "dependencies": {}
+}
