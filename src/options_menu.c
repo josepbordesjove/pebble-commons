@@ -41,12 +41,11 @@ static void draw_row(GContext *ctx, const Layer *cell_layer, MenuIndex *index, v
       GTextOverflowModeWordWrap, GTextAlignmentLeft);
   int text_y = (bounds.size.h - text_size.h) / 2;
 
-  #ifdef PBL_COLOR
   bool selected = menu_layer_get_selected_index(s_menu_layer).row == index->row;
+  #ifdef PBL_COLOR
   graphics_context_set_text_color(ctx, selected ? GColorWhite : GColorLightGray);
   #else
-  // B&W: white text on black bg; system inversion makes it black on white when selected
-  graphics_context_set_text_color(ctx, GColorWhite);
+  graphics_context_set_text_color(ctx, selected ? GColorBlack : GColorWhite);
   #endif
 
   GRect text_rect = GRect(TEXT_PAD, text_y, text_w, text_size.h);
