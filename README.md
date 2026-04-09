@@ -1,6 +1,6 @@
 # pebble-commons
 
-Shared UI components and resources for [Pebble](https://developer.rebble.io/) smartwatch apps. Built for Pebble SDK v3 and compatible with all six hardware platforms.
+Shared UI components and resources for [Pebble](https://developer.repebble.com/) smartwatch apps. Built for Pebble SDK v3 and compatible with all six hardware platforms.
 
 ## Modules
 
@@ -344,7 +344,7 @@ The `examples/` directory contains reference implementations:
 
 ### Running the demo app
 
-**Prerequisites:** [Pebble SDK](https://developer.rebble.io/developer.pebble.com/sdk/install/index.html) installed and available in your PATH.
+**Prerequisites:** [Pebble SDK](https://developer.repebble.com/sdk/install/index.html) installed and available in your PATH.
 
 ```bash
 cd examples/demo-app
@@ -414,7 +414,7 @@ pebble-commons/
 
 ## Acknowledgments
 
-Thanks to [Pebble](https://developer.rebble.io/) and the [Rebble](https://rebble.io/) community for keeping the platform alive. Most of the code in this library is inspired by patterns found in the official Pebble SDK examples and refined with the help of [Claude](https://claude.ai), Anthropic's AI assistant.
+Thanks to [Pebble](https://developer.repebble.com/) and the [Rebble](https://rebble.io/) community for keeping the platform alive. Most of the code in this library is inspired by patterns found in the official Pebble SDK examples and refined with the help of [Claude](https://claude.ai), Anthropic's AI assistant.
 
 ## License
 

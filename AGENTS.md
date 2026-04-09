@@ -1,13 +1,13 @@
 # Project Overview
 
-This is an open-source **C source library** for [Pebble](https://developer.rebble.io/) smartwatch apps, built with **Pebble SDK v3**. It provides reusable UI components that work across all Pebble hardware platforms. The library is consumed as source files via git submodule — the Pebble SDK does not support linking precompiled C libraries.
+This is an open-source **C source library** for [Pebble](https://developer.repebble.com/) smartwatch apps, built with **Pebble SDK v3**. It provides reusable UI components that work across all Pebble hardware platforms. The library is consumed as source files via git submodule — the Pebble SDK does not support linking precompiled C libraries.
 
 - **Language:** C (C99, Pebble SDK conventions)
 - **Build System:** WAF (wscript), integrated via the Pebble SDK toolchain
 - **Integration:** Git submodule at `src/c/commons/`, auto-compiled by the default wscript glob `src/c/**/*.c`
 - **Platforms:** 6 hardware targets (see below)
 
-This project was built with the help of [Claude](https://claude.ai), Anthropic's AI assistant. The code is inspired by patterns found in the official [Pebble SDK examples](https://developer.rebble.io/) and refined with Claude's assistance.
+This project was built with the help of [Claude](https://claude.ai), Anthropic's AI assistant. The code is inspired by patterns found in the official [Pebble SDK examples](https://developer.repebble.com/) and refined with Claude's assistance.
 
 # Target Platforms
 
